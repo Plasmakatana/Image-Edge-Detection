@@ -1,10 +1,9 @@
 #include "common.h"
 #define KERNEL_SIZE 5
 
-// ---------------- Gaussian kernel ----------------
 float gaussian[KERNEL_SIZE][KERNEL_SIZE];
 
-// generate gaussian kernel dynamically
+
 void createGaussianKernel(float sigma) {
     float sum = 0.0;
 
@@ -19,13 +18,12 @@ void createGaussianKernel(float sigma) {
         }
     }
 
-    // normalize
+
     for (int y = 0; y < KERNEL_SIZE; y++)
         for (int x = 0; x < KERNEL_SIZE; x++)
             gaussian[y][x] /= sum;
 }
 
-// ---------------- main ----------------
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         printf("Usage: %s input_image output_image\n", argv[0]);
@@ -41,7 +39,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    createGaussianKernel(1.4); // sigma (controls blur strength)
+    createGaussianKernel(1.4); 
 
     float *blur = malloc(width * height * sizeof(float));
     int *logImg = malloc(width * height * sizeof(int));
@@ -49,7 +47,6 @@ int main(int argc, char *argv[]) {
 
     int half = KERNEL_SIZE / 2;
 
-    // ---------------- STEP 1: Gaussian blur ----------------
     for (int y = half; y < height - half; y++) {
         for (int x = half; x < width - half; x++) {
 
@@ -67,7 +64,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // ---------------- STEP 2: Laplacian ----------------
     for (int y = 1; y < height - 1; y++) {
         for (int x = 1; x < width - 1; x++) {
 
@@ -84,7 +80,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // ---------------- STEP 3: zero crossing ----------------
+
     for (int y = 1; y < height - 1; y++) {
         for (int x = 1; x < width - 1; x++) {
 
@@ -113,7 +109,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // ---------------- STEP 4: write PNG ----------------
     stbi_write_png(outputFile, width, height, 3, output, width * 3);
 
     printf("Saved %s (Gaussian + LoG edges)\n",outputFile);
