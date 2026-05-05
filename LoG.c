@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
+#include "common.h"
 #define KERNEL_SIZE 5
 
 // ---------------- Gaussian kernel ----------------
@@ -35,10 +26,16 @@ void createGaussianKernel(float sigma) {
 }
 
 // ---------------- main ----------------
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Usage: %s input_image output_image\n", argv[0]);
+        return 1;
+    }
+    char *inputFile = argv[1];
+    char *outputFile = argv[2];
     int width, height, channels;
 
-    unsigned char *img = stbi_load("input.png", &width, &height, &channels, 1);
+    unsigned char *img = stbi_load(inputFile, &width, &height, &channels, 1);
     if (!img) {
         printf("Failed to load image\n");
         return 1;
@@ -117,9 +114,9 @@ int main() {
     }
 
     // ---------------- STEP 4: write PNG ----------------
-    stbi_write_png("output.png", width, height, 3, output, width * 3);
+    stbi_write_png(outputFile, width, height, 3, output, width * 3);
 
-    printf("Saved output.png (Gaussian + LoG edges)\n");
+    printf("Saved %s (Gaussian + LoG edges)\n",outputFile);
 
     // cleanup
     stbi_image_free(img);
